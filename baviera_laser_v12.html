@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Source+Code+Pro:wght@400;600&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#0d2354;color:#fff;font-family:'Raleway',sans-serif;min-height:100vh;padding:24px 16px;}
+  .container{max-width:840px;margin:0 auto;}
+
+  header{display:flex;flex-direction:column;align-items:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.12);position:relative;}
+  .logo-text{font-family:'Raleway',sans-serif;font-weight:800;font-size:32px;letter-spacing:10px;color:#fff;text-transform:uppercase;margin-bottom:10px;}
+  h1{font-size:17px;font-weight:700;letter-spacing:3px;text-transform:uppercase;}
+  .subtitle{font-size:10px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#5ba8d4;margin-top:4px;}
+
+  .lang-switcher{display:flex;gap:6px;position:absolute;top:0;right:0;}
+  .lang-btn{background:transparent;border:1px solid rgba(91,168,212,0.4);color:#5ba8d4;font-family:'Raleway',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 10px;border-radius:4px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+  .lang-btn.active,.lang-btn:hover{background:#5ba8d4;color:#0d2354;border-color:#5ba8d4;}
+
+  .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+  .eye-card{background:rgba(255,255,255,0.04);border:1px solid rgba(91,168,212,0.15);border-radius:12px;padding:16px;transition:border-color .25s,box-shadow .25s;}
+  .eye-card.focused{border-color:#5ba8d4;box-shadow:0 0 0 2px rgba(91,168,212,0.15);}
+  .eye-label{font-size:9px;font-weight:700;letter-spacing:3px;color:#5ba8d4;text-transform:uppercase;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(91,168,212,0.2);}
+
+  .rx-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+  .field label{display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-bottom:5px;text-transform:uppercase;}
+
+  input[type="number"].rx-input{width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:8px 10px;color:#fff;font-family:'Source Code Pro',monospace;font-size:14px;outline:none;transition:all .2s;-moz-appearance:textfield;}
+  input[type="number"].rx-input::-webkit-inner-spin-button,input[type="number"].rx-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+  input[type="number"].rx-input:focus{border-color:#5ba8d4;background:rgba(91,168,212,0.1);box-shadow:0 0 0 3px rgba(91,168,212,0.12);}
+  input[type="number"].rx-input.error{border-color:#ff6050;background:rgba(255,80,60,0.08);}
+  /* placeholder styled as a faint zero */
+  input[type="number"].rx-input::placeholder{color:rgba(255,255,255,0.22);font-style:normal;}
+  .field-error{font-size:9px;color:#ff7060;margin-top:4px;min-height:13px;display:block;}
+
+  .slider-field{margin-bottom:14px;}
+  .slider-field:last-child{margin-bottom:0;}
+  .slider-top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+  .slider-label{font-size:9px;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,0.4);text-transform:uppercase;}
+  .slider-num-wrap{display:flex;align-items:center;gap:4px;}
+  .slider-num-wrap input[type="number"]{width:56px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:5px 7px;color:#fff;font-family:'Source Code Pro',monospace;font-size:12px;outline:none;transition:all .2s;-moz-appearance:textfield;text-align:right;}
+  .slider-num-wrap input[type="number"]::-webkit-inner-spin-button,.slider-num-wrap input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;}
+  .slider-num-wrap input[type="number"]:focus{border-color:#5ba8d4;background:rgba(91,168,212,0.1);}
+  .slider-unit{font-size:10px;color:rgba(255,255,255,0.35);font-family:'Source Code Pro',monospace;white-space:nowrap;}
+
+  .track-wrap{position:relative;padding:0 7px;}
+  input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:2px;outline:none;cursor:pointer;background:rgba(255,255,255,0.12);display:block;}
+  input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#5ba8d4;cursor:pointer;box-shadow:0 0 7px rgba(91,168,212,0.6);margin-top:-5.5px;}
+  input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;border:none;background:#5ba8d4;cursor:pointer;}
+  input[type="range"]::-webkit-slider-runnable-track{height:3px;border-radius:2px;}
+  .slider-ticks{display:flex;justify-content:space-between;padding:0 7px;margin-top:9px;}
+  .slider-ticks span{font-size:8px;color:rgba(255,255,255,0.2);font-family:'Source Code Pro',monospace;text-align:center;}
+
+  .results-section{margin-top:18px;}
+  .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .result-card{border-radius:12px;padding:16px;background:rgba(91,168,212,0.07);border:1px solid rgba(91,168,212,0.2);}
+  .result-card-title{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#5ba8d4;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(91,168,212,0.15);}
+  .model-block{margin-bottom:12px;}
+  .model-block:last-of-type{margin-bottom:0;}
+  .model-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:5px;}
+  .model-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;}
+  .ablation-num{font-size:26px;font-weight:700;font-family:'Source Code Pro',monospace;line-height:1;color:#7dc0e4;}
+  .ablation-unit-sm{font-size:10px;color:rgba(255,255,255,0.3);font-family:'Source Code Pro',monospace;margin-left:3px;}
+
+  .pta-badge{display:flex;flex-direction:column;align-items:flex-end;}
+  .pta-label{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:2px;}
+  .pta-row{display:flex;align-items:baseline;gap:2px;position:relative;cursor:default;}
+  .pta-val{font-size:19px;font-weight:700;font-family:'Source Code Pro',monospace;}
+  .pta-val.ok{color:#8de86a;}
+  .pta-val.warn{color:#f0a030;}
+  .pta-val.danger{color:#ff5040;}
+  .pta-pct{font-size:10px;font-family:'Source Code Pro',monospace;color:rgba(255,255,255,0.3);}
+  .pta-pct.danger{color:#ff5040;}
+  .pta-excl{display:none;font-size:13px;font-weight:800;color:#ff5040;margin-left:2px;}
+  .pta-excl.visible{display:inline;}
+  .pta-tooltip{display:none;position:absolute;bottom:calc(100% + 6px);right:0;background:#1a2e5a;border:1px solid rgba(255,80,60,0.4);color:#ff8070;font-size:9px;font-family:'Raleway',sans-serif;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:5px 9px;border-radius:5px;white-space:nowrap;pointer-events:none;z-index:10;}
+  .pta-row.has-danger:hover .pta-tooltip{display:block;}
+
+  .model-divider{height:1px;background:rgba(255,255,255,0.06);margin:11px 0;}
+  .footnote{font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.3px;line-height:1.5;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07);font-style:italic;}
+
+  @media(max-width:600px){
+    body{padding:16px 12px;}
+    .logo-text{font-size:26px;letter-spacing:7px;}
+    h1{font-size:14px;letter-spacing:2px;}
+    .lang-switcher{position:static;justify-content:center;margin-bottom:12px;}
+    header{padding-bottom:16px;margin-bottom:18px;}
+    .main-grid{grid-template-columns:1fr;gap:12px;}
+    input[type="range"]{height:4px;}
+    input[type="range"]::-webkit-slider-thumb{width:22px;height:22px;margin-top:-9px;}
+    input[type="range"]::-moz-range-thumb{width:22px;height:22px;}
+    .track-wrap{padding:0 11px;}
+    .slider-ticks{padding:0 11px;margin-top:10px;}
+    .rx-row{gap:8px;}
+    input[type="number"].rx-input{font-size:16px;padding:10px 10px;}
+    .results-grid{grid-template-columns:1fr;gap:12px;}
+    .ablation-num{font-size:30px;}
+    .pta-val{font-size:22px;}
+    .slider-num-wrap input[type="number"]{width:60px;font-size:14px;padding:7px 8px;}
+    .slider-unit{font-size:11px;}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="lang-switcher">
+    <button class="lang-btn" onclick="setLang('es',this)" tabindex="-1">ES</button>
+    <button class="lang-btn active" onclick="setLang('it',this)" tabindex="-1">IT</button>
+  </div>
+  <div class="logo-text">BAVIERA</div>
+  <div style="text-align:center">
+    <h1 id="main-title">Calcolatore Teneo</h1>
+    <div class="subtitle" id="main-subtitle">Ablazione Corneale</div>
+  </div>
+</header>
+
+<div class="main-grid">
+  <!-- OD -->
+  <div class="eye-card" id="card-od">
+    <div class="eye-label" id="label-od">Occhio Destro</div>
+    <div class="rx-row">
+      <div class="field">
+        <label id="lbl-sfera-od">Sfera (D)</label>
+        <input type="number" class="rx-input" id="od-esfera" step="0.25" placeholder="0"
+               tabindex="1" oninput="onRx('od')" onkeydown="enterTo(event,'od-cilindro')">
+        <span class="field-error" id="err-od-esfera"></span>
+      </div>
+      <div class="field">
+        <label id="lbl-cil-od">Cilindro (D)</label>
+        <input type="number" class="rx-input" id="od-cilindro" step="0.25" placeholder="0"
+               tabindex="2" oninput="onRx('od')" onkeydown="enterTo(event,'oi-esfera')">
+        <span class="field-error" id="err-od-cilindro"></span>
+      </div>
+    </div>
+    <div class="slider-field">
+      <div class="slider-top-row">
+        <span class="slider-label" id="lbl-paq-od">Pachimetria</span>
+        <div class="slider-num-wrap">
+          <input type="number" id="od-paq-n" min="400" max="670" step="1" value="530" tabindex="-1" oninput="syncNR('od-paq-n','od-paq-r');liveCalc()">
+          <span class="slider-unit">&#956;m</span>
+        </div>
+      </div>
+      <div class="track-wrap">
+        <input type="range" id="od-paq-r" min="400" max="670" step="1" value="530" tabindex="-1" oninput="syncRT('od-paq-r','od-paq-n');liveCalc()">
+      </div>
+      <div class="slider-ticks" id="ticks-od-paq"></div>
+    </div>
+    <div class="slider-field">
+      <div class="slider-top-row">
+        <span class="slider-label" id="lbl-zo-od">Zona Ottica</span>
+        <div class="slider-num-wrap">
+          <input type="number" id="od-zo-n" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1" oninput="syncNR('od-zo-n','od-zo-r');liveCalc()">
+          <span class="slider-unit">mm</span>
+        </div>
+      </div>
+      <div class="track-wrap">
+        <input type="range" id="od-zo-r" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1" oninput="syncRT('od-zo-r','od-zo-n');liveCalc()">
+      </div>
+      <div class="slider-ticks" id="ticks-od-zo"></div>
+    </div>
+  </div>
+
+  <!-- OI -->
+  <div class="eye-card" id="card-oi">
+    <div class="eye-label" id="label-oi">Occhio Sinistro</div>
+    <div class="rx-row">
+      <div class="field">
+        <label id="lbl-sfera-oi">Sfera (D)</label>
+        <input type="number" class="rx-input" id="oi-esfera" step="0.25" placeholder="0"
+               tabindex="3" oninput="onRx('oi')" onkeydown="enterTo(event,'oi-cilindro')">
+        <span class="field-error" id="err-oi-esfera"></span>
+      </div>
+      <div class="field">
+        <label id="lbl-cil-oi">Cilindro (D)</label>
+        <input type="number" class="rx-input" id="oi-cilindro" step="0.25" placeholder="0"
+               tabindex="4" oninput="onRx('oi')" onkeydown="enterTo(event,null)">
+        <span class="field-error" id="err-oi-cilindro"></span>
+      </div>
+    </div>
+    <div class="slider-field">
+      <div class="slider-top-row">
+        <span class="slider-label" id="lbl-paq-oi">Pachimetria</span>
+        <div class="slider-num-wrap">
+          <input type="number" id="oi-paq-n" min="400" max="670" step="1" value="530" tabindex="-1" oninput="syncNR('oi-paq-n','oi-paq-r');liveCalc()">
+          <span class="slider-unit">&#956;m</span>
+        </div>
+      </div>
+      <div class="track-wrap">
+        <input type="range" id="oi-paq-r" min="400" max="670" step="1" value="530" tabindex="-1" oninput="syncRT('oi-paq-r','oi-paq-n');liveCalc()">
+      </div>
+      <div class="slider-ticks" id="ticks-oi-paq"></div>
+    </div>
+    <div class="slider-field">
+      <div class="slider-top-row">
+        <span class="slider-label" id="lbl-zo-oi">Zona Ottica</span>
+        <div class="slider-num-wrap">
+          <input type="number" id="oi-zo-n" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1" oninput="syncNR('oi-zo-n','oi-zo-r');liveCalc()">
+          <span class="slider-unit">mm</span>
+        </div>
+      </div>
+      <div class="track-wrap">
+        <input type="range" id="oi-zo-r" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1" oninput="syncRT('oi-zo-r','oi-zo-n');liveCalc()">
+      </div>
+      <div class="slider-ticks" id="ticks-oi-zo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results-section" id="results">
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-card-title" id="res-title-od">Occhio Destro</div>
+      <div class="model-block">
+        <div class="model-label">Proscan Asferico</div>
+        <div class="model-row">
+          <div><span class="ablation-num" id="r-as-od">0</span><span class="ablation-unit-sm">&#956;m</span></div>
+          <div class="pta-badge">
+            <div class="pta-label">PTA</div>
+            <div class="pta-row" id="row-as-od">
+              <span class="pta-val" id="p-as-od">&#8212;</span>
+              <span class="pta-pct" id="pc-as-od"></span>
+              <span class="pta-excl" id="ex-as-od">!</span>
+              <span class="pta-tooltip" id="tt-as-od">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="model-divider"></div>
+      <div class="model-block">
+        <div class="model-label">Proscan ECO</div>
+        <div class="model-row">
+          <div><span class="ablation-num" id="r-eco-od">0</span><span class="ablation-unit-sm">&#956;m</span></div>
+          <div class="pta-badge">
+            <div class="pta-label">PTA</div>
+            <div class="pta-row" id="row-eco-od">
+              <span class="pta-val" id="p-eco-od">&#8212;</span>
+              <span class="pta-pct" id="pc-eco-od"></span>
+              <span class="pta-excl" id="ex-eco-od">!</span>
+              <span class="pta-tooltip" id="tt-eco-od">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footnote" id="fn-od">* PTA calcolato per flap di 100 &#956;m</div>
+    </div>
+    <div class="result-card">
+      <div class="result-card-title" id="res-title-oi">Occhio Sinistro</div>
+      <div class="model-block">
+        <div class="model-label">Proscan Asferico</div>
+        <div class="model-row">
+          <div><span class="ablation-num" id="r-as-oi">0</span><span class="ablation-unit-sm">&#956;m</span></div>
+          <div class="pta-badge">
+            <div class="pta-label">PTA</div>
+            <div class="pta-row" id="row-as-oi">
+              <span class="pta-val" id="p-as-oi">&#8212;</span>
+              <span class="pta-pct" id="pc-as-oi"></span>
+              <span class="pta-excl" id="ex-as-oi">!</span>
+              <span class="pta-tooltip" id="tt-as-oi">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="model-divider"></div>
+      <div class="model-block">
+        <div class="model-label">Proscan ECO</div>
+        <div class="model-row">
+          <div><span class="ablation-num" id="r-eco-oi">0</span><span class="ablation-unit-sm">&#956;m</span></div>
+          <div class="pta-badge">
+            <div class="pta-label">PTA</div>
+            <div class="pta-row" id="row-eco-oi">
+              <span class="pta-val" id="p-eco-oi">&#8212;</span>
+              <span class="pta-pct" id="pc-eco-oi"></span>
+              <span class="pta-excl" id="ex-eco-oi">!</span>
+              <span class="pta-tooltip" id="tt-eco-oi">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footnote" id="fn-oi">* PTA calcolato per flap di 100 &#956;m</div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+const i18n={
+  es:{title:'Calculadora Teneo',subtitle:'Ablaci\u00f3n Corneal',od:'Ojo Derecho',oi:'Ojo Izquierdo',sfera:'Esfera (D)',cilindro:'Cilindro (D)',zo:'Zona \u00d3ptica',paq:'Paquimetr\u00eda',errSfera:'Rango: \u221215 / +6 D',errCil:'Rango: 0 / \u22128 D',fuori:'Fuera de rango',fn:'* PTA calculado para flap de 100 \u03bcm'},
+  it:{title:'Calcolatore Teneo',subtitle:'Ablazione Corneale',od:'Occhio Destro',oi:'Occhio Sinistro',sfera:'Sfera (D)',cilindro:'Cilindro (D)',zo:'Zona Ottica',paq:'Pachimetria',errSfera:'Range: \u221215 / +6 D',errCil:'Range: 0 / \u22128 D',fuori:'Fuori range',fn:'* PTA calcolato per flap di 100 \u03bcm'}
+};
+let lang='it';
+
+function setLang(l,btn){
+  lang=l;const t=i18n[l];
+  document.getElementById('main-title').textContent=t.title;
+  document.getElementById('main-subtitle').textContent=t.subtitle;
+  ['od','oi'].forEach(e=>{
+    document.getElementById('label-'+e).textContent=t[e];
+    document.getElementById('lbl-sfera-'+e).textContent=t.sfera;
+    document.getElementById('lbl-cil-'+e).textContent=t.cilindro;
+    document.getElementById('lbl-zo-'+e).textContent=t.zo;
+    document.getElementById('lbl-paq-'+e).textContent=t.paq;
+    document.getElementById('res-title-'+e).textContent=t[e];
+    document.getElementById('fn-'+e).textContent=t.fn;
+    ['as','eco'].forEach(m=>{document.getElementById('tt-'+m+'-'+e).textContent=t.fuori;});
+    revalidate(e);
+  });
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function buildTicks(cid,labels){
+  const el=document.getElementById(cid);el.innerHTML='';
+  labels.forEach(v=>{const s=document.createElement('span');s.textContent=v;el.appendChild(s);});
+}
+
+function fillSlider(r){
+  const mn=parseFloat(r.min),mx=parseFloat(r.max),v=parseFloat(r.value);
+  const pct=((v-mn)/(mx-mn))*100;
+  r.style.background='linear-gradient(to right,#5ba8d4 '+pct+'%,rgba(255,255,255,0.12) '+pct+'%)';
+}
+function syncRT(rid,nid){
+  const r=document.getElementById(rid),n=document.getElementById(nid);
+  n.value=parseFloat(r.step)<1?parseFloat(r.value).toFixed(1):parseInt(r.value);
+  fillSlider(r);
+}
+function syncNR(nid,rid){
+  const n=document.getElementById(nid),r=document.getElementById(rid);
+  let v=parseFloat(n.value);if(isNaN(v))return;
+  v=Math.max(parseFloat(r.min),Math.min(parseFloat(r.max),v));
+  r.value=v;fillSlider(r);
+}
+
+/* Empty string → treat as 0; otherwise parse */
+function getVal(id){
+  const v=document.getElementById(id).value.trim();
+  if(v==='')return 0;
+  return parseFloat(v);
+}
+
+function validateField(id,min,max,errId,msgKey){
+  const raw=document.getElementById(id).value.trim();
+  const v=raw===''?0:parseFloat(raw);
+  const el=document.getElementById(id),err=document.getElementById(errId);
+  if(v<min||v>max){el.classList.add('error');err.textContent=i18n[lang][msgKey];return false;}
+  el.classList.remove('error');err.textContent='';return true;
+}
+function revalidate(eye){
+  validateField(eye+'-esfera',-15,6,'err-'+eye+'-esfera','errSfera');
+  validateField(eye+'-cilindro',-8,0,'err-'+eye+'-cilindro','errCil');
+}
+function onRx(eye){revalidate(eye);liveCalc();}
+
+function setupFocus(){
+  ['od','oi'].forEach(eye=>{
+    ['esfera','cilindro'].forEach(f=>{
+      const inp=document.getElementById(eye+'-'+f);
+      inp.addEventListener('focus',()=>document.getElementById('card-'+eye).classList.add('focused'));
+      inp.addEventListener('blur',()=>document.getElementById('card-'+eye).classList.remove('focused'));
+    });
+  });
+}
+function enterTo(e,nid){if(e.key!=='Enter')return;e.preventDefault();if(nid)document.getElementById(nid).focus();}
+
+function calcAs(E,C,Z){return 17.58*E+45.44*C+8.62*E*C-5.17*E*Z-9.15*C*Z-1.38*E*C*Z;}
+function calcEco(E,C,Z){return 13.22*E+11.36*C+2.03*E*C-4.39*E*Z-3.77*C*Z-0.36*E*C*Z;}
+function ptaClass(p){return p<=0.35?'ok':p<=0.40?'warn':'danger';}
+
+function setResult(ablId,ptaId,pctId,exId,ttId,rowId,abl,paq){
+  const ablEl=document.getElementById(ablId);
+  const ptaEl=document.getElementById(ptaId);
+  const pctEl=document.getElementById(pctId);
+  const exEl=document.getElementById(exId);
+  const rowEl=document.getElementById(rowId);
+  document.getElementById(ttId).textContent=i18n[lang].fuori;
+
+  if(abl===null){
+    // validation error state
+    ablEl.textContent='\u2014';
+    ptaEl.textContent='\u2014';ptaEl.className='pta-val';
+    pctEl.textContent='';pctEl.className='pta-pct';
+    exEl.classList.remove('visible');rowEl.classList.remove('has-danger');
+    return;
+  }
+
+  const ablRaw=Math.max(0,abl);
+  const ablDisplay=ablRaw>0?Math.ceil(ablRaw*1.05):0;
+  ablEl.textContent=ablDisplay;
+
+  // If ablation is zero, do not calculate PTA
+  if(ablDisplay===0){
+    ptaEl.textContent='\u2014';ptaEl.className='pta-val';
+    pctEl.textContent='';pctEl.className='pta-pct';
+    exEl.classList.remove('visible');rowEl.classList.remove('has-danger');
+    return;
+  }
+
+  const pta=(ablDisplay+100)/paq;
+  const pct=(pta*100).toFixed(1);
+  const cls=ptaClass(pta);
+  ptaEl.textContent=pct;ptaEl.className='pta-val '+cls;
+  pctEl.textContent='%';
+
+  if(cls==='danger'){
+    pctEl.className='pta-pct danger';
+    exEl.classList.add('visible');rowEl.classList.add('has-danger');
+  } else {
+    pctEl.className='pta-pct';
+    exEl.classList.remove('visible');rowEl.classList.remove('has-danger');
+  }
+}
+
+function isValid(eye){
+  const E=getVal(eye+'-esfera'),C=getVal(eye+'-cilindro');
+  return E>=-15&&E<=6&&C>=-8&&C<=0;
+}
+
+function liveCalc(){
+  const odE=getVal('od-esfera'),odC=getVal('od-cilindro');
+  const oiE=getVal('oi-esfera'),oiC=getVal('oi-cilindro');
+  const odZ=parseFloat(document.getElementById('od-zo-r').value);
+  const oiZ=parseFloat(document.getElementById('oi-zo-r').value);
+  const odP=parseFloat(document.getElementById('od-paq-r').value);
+  const oiP=parseFloat(document.getElementById('oi-paq-r').value);
+
+  const odOk=isValid('od'),oiOk=isValid('oi');
+
+  setResult('r-as-od','p-as-od','pc-as-od','ex-as-od','tt-as-od','row-as-od',odOk?calcAs(odE,odC,odZ):null,odP);
+  setResult('r-eco-od','p-eco-od','pc-eco-od','ex-eco-od','tt-eco-od','row-eco-od',odOk?calcEco(odE,odC,odZ):null,odP);
+  setResult('r-as-oi','p-as-oi','pc-as-oi','ex-as-oi','tt-as-oi','row-as-oi',oiOk?calcAs(oiE,oiC,oiZ):null,oiP);
+  setResult('r-eco-oi','p-eco-oi','pc-eco-oi','ex-eco-oi','tt-eco-oi','row-eco-oi',oiOk?calcEco(oiE,oiC,oiZ):null,oiP);
+}
+
+(function init(){
+  buildTicks('ticks-od-paq',['400','500','600','670']);
+  buildTicks('ticks-oi-paq',['400','500','600','670']);
+  buildTicks('ticks-od-zo',['6.0','6.3','6.5','6.8','7.0']);
+  buildTicks('ticks-oi-zo',['6.0','6.3','6.5','6.8','7.0']);
+  document.querySelectorAll('input[type="range"]').forEach(r=>fillSlider(r));
+  setupFocus();
+  liveCalc();
+})();
+</script>
+</body>
+</html>

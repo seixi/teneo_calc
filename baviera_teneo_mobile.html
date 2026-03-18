@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#0b1e45;
+  --bg2:#0f2454;
+  --card:#ffffff09;
+  --card-focus:#5ba8d41a;
+  --border:#ffffff14;
+  --border-focus:#5ba8d4;
+  --blue:#5ba8d4;
+  --blue-lt:#7dc0e4;
+  --text:#e8f0f8;
+  --muted:#6a85a8;
+  --dim:#3a5070;
+  --ok:#6ddb52;
+  --warn:#f0a030;
+  --danger:#ff4d3a;
+  --red-dim:#ff4d3a44;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+
+html,body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  min-height:100vh;
+  /* max-width simulates iPhone in desktop preview */
+  max-width:430px;
+  margin:0 auto;
+  padding:0;
+}
+
+/* ── HEADER ── */
+.hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px 8px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg2);
+  position:sticky;top:0;z-index:20;
+}
+.logo{
+  font-family:'DM Sans',sans-serif;
+  font-weight:700;font-size:15px;letter-spacing:5px;
+  color:#fff;text-transform:uppercase;
+}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+.hdr-title{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);}
+.hdr-sub{font-size:9px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--blue);}
+
+/* lang */
+.lang{display:flex;gap:4px;}
+.lang button{
+  background:transparent;border:1px solid var(--dim);
+  color:var(--muted);font-family:'DM Sans',sans-serif;
+  font-size:9px;font-weight:700;letter-spacing:1px;
+  padding:3px 7px;border-radius:3px;cursor:pointer;
+  text-transform:uppercase;
+}
+.lang button.on{background:var(--blue);color:var(--bg);border-color:var(--blue);}
+
+/* ── BODY SCROLL ── */
+.body{padding:10px 12px 24px;display:flex;flex-direction:column;gap:8px;}
+
+/* ── EYE SECTION ── */
+.eye{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  transition:border-color .2s;
+}
+.eye.focused{border-color:var(--border-focus);background:var(--card-focus);}
+
+.eye-hdr{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 11px 6px;
+  border-bottom:1px solid var(--border);
+  background:#ffffff05;
+}
+.eye-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;}
+.eye-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);}
+
+/* RX row */
+.rx{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+.rx-cell{padding:8px 11px;}
+.rx-cell:first-child{border-right:1px solid var(--border);}
+.rx-cell label{display:block;font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+
+input[type="number"].nf{
+  width:100%;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'DM Mono',monospace;
+  font-size:18px;font-weight:500;
+  -moz-appearance:textfield;
+  padding:0;line-height:1;
+}
+input[type="number"].nf::-webkit-inner-spin-button,
+input[type="number"].nf::-webkit-outer-spin-button{-webkit-appearance:none;}
+input[type="number"].nf::placeholder{color:var(--dim);}
+input[type="number"].nf.err{color:var(--danger);}
+
+.rx-err{font-size:8px;color:var(--danger);margin-top:2px;min-height:10px;line-height:1;}
+
+/* SLIDERS */
+.sliders{padding:8px 11px;display:flex;flex-direction:column;gap:7px;}
+
+.sl-row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;}
+.sl-lbl{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+
+.sl-right{display:flex;align-items:center;gap:4px;}
+input[type="number"].sf{
+  width:44px;background:var(--border);border:1px solid var(--dim);
+  border-radius:4px;padding:3px 5px;color:var(--text);
+  font-family:'DM Mono',monospace;font-size:11px;
+  text-align:right;outline:none;-moz-appearance:textfield;
+}
+input[type="number"].sf::-webkit-inner-spin-button,
+input[type="number"].sf::-webkit-outer-spin-button{-webkit-appearance:none;}
+input[type="number"].sf:focus{border-color:var(--blue);}
+.sl-unit{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;white-space:nowrap;}
+
+/* track */
+.sl-track{position:relative;padding:0 5px;margin-top:3px;}
+input[type="range"]{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:2px;border-radius:1px;
+  background:var(--dim);display:block;outline:none;cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--blue);cursor:pointer;
+  box-shadow:0 0 6px #5ba8d466;
+  margin-top:-7px;
+}
+input[type="range"]::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;border:none;
+  background:var(--blue);cursor:pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track{height:2px;border-radius:1px;}
+
+.sl-ticks{
+  display:flex;justify-content:space-between;
+  padding:0 5px;margin-top:5px;
+}
+.sl-ticks span{font-size:8px;color:var(--dim);font-family:'DM Mono',monospace;}
+
+/* ── RESULTS ── */
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+.res-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+}
+.res-hdr{
+  padding:6px 10px;
+  background:#ffffff06;
+  border-bottom:1px solid var(--border);
+  font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--blue);
+}
+
+.model{padding:8px 10px;border-bottom:1px solid var(--border);}
+.model:last-of-type{border-bottom:none;}
+.model-lbl{font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+
+.model-vals{display:flex;align-items:flex-end;justify-content:space-between;gap:4px;}
+
+.abl-wrap{display:flex;align-items:baseline;gap:2px;}
+.abl-n{font-size:22px;font-weight:700;font-family:'DM Mono',monospace;line-height:1;color:var(--blue-lt);}
+.abl-u{font-size:9px;color:var(--dim);font-family:'DM Mono',monospace;}
+
+.pta-wrap{display:flex;flex-direction:column;align-items:flex-end;}
+.pta-lbl{font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:1px;}
+.pta-row{display:flex;align-items:baseline;gap:1px;position:relative;cursor:default;}
+.pta-n{font-size:15px;font-weight:700;font-family:'DM Mono',monospace;}
+.pta-n.ok{color:var(--ok);}
+.pta-n.warn{color:var(--warn);}
+.pta-n.danger{color:var(--danger);}
+.pta-pct{font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);}
+.pta-pct.danger{color:var(--danger);}
+.pta-x{display:none;font-size:11px;font-weight:700;color:var(--danger);margin-left:1px;}
+.pta-x.on{display:inline;}
+.pta-tip{
+  display:none;position:absolute;bottom:calc(100% + 5px);right:0;
+  background:#0d1e3e;border:1px solid var(--red-dim);
+  color:var(--danger);font-size:8px;font-family:'DM Sans',sans-serif;
+  font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  padding:4px 8px;border-radius:4px;white-space:nowrap;
+  pointer-events:none;z-index:30;
+}
+.pta-row.bad:hover .pta-tip{display:block;}
+/* touch: show on tap via JS */
+.pta-row.bad.tip-show .pta-tip{display:block;}
+
+.res-foot{
+  padding:5px 10px;
+  font-size:8px;color:var(--dim);font-style:italic;
+  border-top:1px solid var(--border);
+  background:#ffffff03;
+}
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">BAVIERA</div>
+  <div class="hdr-right">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div>
+        <div class="hdr-title" id="ht">Calcolatore Teneo</div>
+        <div class="hdr-sub" id="hs">Ablazione Corneale</div>
+      </div>
+      <div class="lang">
+        <button onclick="setLang('es',this)">ES</button>
+        <button class="on" onclick="setLang('it',this)">IT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- OD -->
+  <div class="eye" id="card-od">
+    <div class="eye-hdr"><div class="eye-dot"></div><span class="eye-lbl" id="lod">Occhio Destro</span></div>
+    <div class="rx">
+      <div class="rx-cell">
+        <label id="ls-od">Sfera (D)</label>
+        <input type="number" class="nf" id="od-s" step="0.25" placeholder="0" tabindex="1"
+               oninput="go('od')" onkeydown="nt(event,'od-c')">
+        <div class="rx-err" id="e-od-s"></div>
+      </div>
+      <div class="rx-cell">
+        <label id="lc-od">Cilindro (D)</label>
+        <input type="number" class="nf" id="od-c" step="0.25" placeholder="0" tabindex="2"
+               oninput="go('od')" onkeydown="nt(event,'oi-s')">
+        <div class="rx-err" id="e-od-c"></div>
+      </div>
+    </div>
+    <div class="sliders">
+      <!-- Pachimetria OD -->
+      <div>
+        <div class="sl-row">
+          <span class="sl-lbl" id="lp-od">Pachimetria</span>
+          <div class="sl-right">
+            <input type="number" class="sf" id="od-pn" min="400" max="670" value="530" tabindex="-1"
+                   oninput="sNR('od-pn','od-pr');calc()">
+            <span class="sl-unit">&#956;m</span>
+          </div>
+        </div>
+        <div class="sl-track">
+          <input type="range" id="od-pr" min="400" max="670" step="1" value="530" tabindex="-1"
+                 oninput="sRT('od-pr','od-pn');calc()">
+        </div>
+        <div class="sl-ticks"><span>400</span><span>500</span><span>600</span><span>670</span></div>
+      </div>
+      <!-- Zona OD -->
+      <div>
+        <div class="sl-row">
+          <span class="sl-lbl" id="lz-od">Zona Ottica</span>
+          <div class="sl-right">
+            <input type="number" class="sf" id="od-zn" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1"
+                   oninput="sNR('od-zn','od-zr');calc()">
+            <span class="sl-unit">mm</span>
+          </div>
+        </div>
+        <div class="sl-track">
+          <input type="range" id="od-zr" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1"
+                 oninput="sRT('od-zr','od-zn');calc()">
+        </div>
+        <div class="sl-ticks"><span>6.0</span><span>6.3</span><span>6.5</span><span>6.8</span><span>7.0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OI -->
+  <div class="eye" id="card-oi">
+    <div class="eye-hdr"><div class="eye-dot"></div><span class="eye-lbl" id="loi">Occhio Sinistro</span></div>
+    <div class="rx">
+      <div class="rx-cell">
+        <label id="ls-oi">Sfera (D)</label>
+        <input type="number" class="nf" id="oi-s" step="0.25" placeholder="0" tabindex="3"
+               oninput="go('oi')" onkeydown="nt(event,'oi-c')">
+        <div class="rx-err" id="e-oi-s"></div>
+      </div>
+      <div class="rx-cell">
+        <label id="lc-oi">Cilindro (D)</label>
+        <input type="number" class="nf" id="oi-c" step="0.25" placeholder="0" tabindex="4"
+               oninput="go('oi')" onkeydown="nt(event,null)">
+        <div class="rx-err" id="e-oi-c"></div>
+      </div>
+    </div>
+    <div class="sliders">
+      <!-- Pachimetria OI -->
+      <div>
+        <div class="sl-row">
+          <span class="sl-lbl" id="lp-oi">Pachimetria</span>
+          <div class="sl-right">
+            <input type="number" class="sf" id="oi-pn" min="400" max="670" value="530" tabindex="-1"
+                   oninput="sNR('oi-pn','oi-pr');calc()">
+            <span class="sl-unit">&#956;m</span>
+          </div>
+        </div>
+        <div class="sl-track">
+          <input type="range" id="oi-pr" min="400" max="670" step="1" value="530" tabindex="-1"
+                 oninput="sRT('oi-pr','oi-pn');calc()">
+        </div>
+        <div class="sl-ticks"><span>400</span><span>500</span><span>600</span><span>670</span></div>
+      </div>
+      <!-- Zona OI -->
+      <div>
+        <div class="sl-row">
+          <span class="sl-lbl" id="lz-oi">Zona Ottica</span>
+          <div class="sl-right">
+            <input type="number" class="sf" id="oi-zn" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1"
+                   oninput="sNR('oi-zn','oi-zr');calc()">
+            <span class="sl-unit">mm</span>
+          </div>
+        </div>
+        <div class="sl-track">
+          <input type="range" id="oi-zr" min="6.0" max="7.0" step="0.1" value="6.5" tabindex="-1"
+                 oninput="sRT('oi-zr','oi-zn');calc()">
+        </div>
+        <div class="sl-ticks"><span>6.0</span><span>6.3</span><span>6.5</span><span>6.8</span><span>7.0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="res-grid">
+    <!-- OD result -->
+    <div class="res-card">
+      <div class="res-hdr" id="rh-od">Occhio Destro</div>
+      <div class="model">
+        <div class="model-lbl">Asferico</div>
+        <div class="model-vals">
+          <div class="abl-wrap"><span class="abl-n" id="ra-od">0</span><span class="abl-u">&#956;m</span></div>
+          <div class="pta-wrap">
+            <div class="pta-lbl">PTA</div>
+            <div class="pta-row" id="pr-a-od">
+              <span class="pta-n" id="pa-od">&mdash;</span>
+              <span class="pta-pct" id="pp-a-od"></span>
+              <span class="pta-x" id="px-a-od">!</span>
+              <span class="pta-tip" id="pt-a-od">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="model">
+        <div class="model-lbl">ECO</div>
+        <div class="model-vals">
+          <div class="abl-wrap"><span class="abl-n" id="re-od">0</span><span class="abl-u">&#956;m</span></div>
+          <div class="pta-wrap">
+            <div class="pta-lbl">PTA</div>
+            <div class="pta-row" id="pr-e-od">
+              <span class="pta-n" id="pe-od">&mdash;</span>
+              <span class="pta-pct" id="pp-e-od"></span>
+              <span class="pta-x" id="px-e-od">!</span>
+              <span class="pta-tip" id="pt-e-od">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="res-foot" id="fn-od">* flap 100 &#956;m</div>
+    </div>
+    <!-- OI result -->
+    <div class="res-card">
+      <div class="res-hdr" id="rh-oi">Occhio Sinistro</div>
+      <div class="model">
+        <div class="model-lbl">Asferico</div>
+        <div class="model-vals">
+          <div class="abl-wrap"><span class="abl-n" id="ra-oi">0</span><span class="abl-u">&#956;m</span></div>
+          <div class="pta-wrap">
+            <div class="pta-lbl">PTA</div>
+            <div class="pta-row" id="pr-a-oi">
+              <span class="pta-n" id="pa-oi">&mdash;</span>
+              <span class="pta-pct" id="pp-a-oi"></span>
+              <span class="pta-x" id="px-a-oi">!</span>
+              <span class="pta-tip" id="pt-a-oi">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="model">
+        <div class="model-lbl">ECO</div>
+        <div class="model-vals">
+          <div class="abl-wrap"><span class="abl-n" id="re-oi">0</span><span class="abl-u">&#956;m</span></div>
+          <div class="pta-wrap">
+            <div class="pta-lbl">PTA</div>
+            <div class="pta-row" id="pr-e-oi">
+              <span class="pta-n" id="pe-oi">&mdash;</span>
+              <span class="pta-pct" id="pp-e-oi"></span>
+              <span class="pta-x" id="px-e-oi">!</span>
+              <span class="pta-tip" id="pt-e-oi">Fuori range</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="res-foot" id="fn-oi">* flap 100 &#956;m</div>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<script>
+const T={
+  es:{ht:'Calculadora Teneo',hs:'Ablaci\u00f3n Corneal',od:'Ojo Derecho',oi:'Ojo Izquierdo',
+      s:'Esfera (D)',c:'Cilindro (D)',z:'Zona \u00d3ptica',p:'Paquimetr\u00eda',
+      es:'Rango: \u221215/+6 D',ec:'Rango: 0/\u22128 D',
+      fuori:'Fuera de rango',fn:'* flap 100 \u03bcm'},
+  it:{ht:'Calcolatore Teneo',hs:'Ablazione Corneale',od:'Occhio Destro',oi:'Occhio Sinistro',
+      s:'Sfera (D)',c:'Cilindro (D)',z:'Zona Ottica',p:'Pachimetria',
+      es:'Range: \u221215/+6 D',ec:'Range: 0/\u22128 D',
+      fuori:'Fuori range',fn:'* flap 100 \u03bcm'}
+};
+let lang='it';
+
+function setLang(l,btn){
+  lang=l;const t=T[l];
+  document.getElementById('ht').textContent=t.ht;
+  document.getElementById('hs').textContent=t.hs;
+  ['od','oi'].forEach(e=>{
+    document.getElementById('l'+e).textContent=t[e];
+    document.getElementById('ls-'+e).textContent=t.s;
+    document.getElementById('lc-'+e).textContent=t.c;
+    document.getElementById('lz-'+e).textContent=t.z;
+    document.getElementById('lp-'+e).textContent=t.p;
+    document.getElementById('rh-'+e).textContent=t[e];
+    document.getElementById('fn-'+e).textContent=t.fn;
+    ['a','e'].forEach(m=>{
+      document.getElementById('pt-'+m+'-'+e).textContent=t.fuori;
+    });
+    val(e);
+  });
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+/* slider fill */
+function fill(r){
+  const mn=+r.min,mx=+r.max,v=+r.value;
+  const p=((v-mn)/(mx-mn))*100;
+  r.style.background=`linear-gradient(to right,var(--blue) ${p}%,var(--dim) ${p}%)`;
+}
+function sRT(rid,nid){
+  const r=document.getElementById(rid),n=document.getElementById(nid);
+  n.value=+r.step<1?(+r.value).toFixed(1):(+r.value|0);
+  fill(r);
+}
+function sNR(nid,rid){
+  const n=document.getElementById(nid),r=document.getElementById(rid);
+  let v=+n.value;if(isNaN(v))return;
+  v=Math.max(+r.min,Math.min(+r.max,v));
+  r.value=v;fill(r);
+}
+
+/* get rx value — empty = 0 */
+function gv(id){const v=document.getElementById(id).value.trim();return v===''?0:+v;}
+
+function val(eye){
+  const E=gv(eye+'-s'),C=gv(eye+'-c');
+  const se=document.getElementById(eye+'-s'),sc=document.getElementById(eye+'-c');
+  const ee=document.getElementById('e-'+eye+'-s'),ec=document.getElementById('e-'+eye+'-c');
+  const eOk=E>=-15&&E<=6,cOk=C>=-8&&C<=0;
+  se.classList.toggle('err',!eOk);
+  sc.classList.toggle('err',!cOk);
+  ee.textContent=eOk?'':T[lang].es;
+  ec.textContent=cOk?'':T[lang].ec;
+  return eOk&&cOk;
+}
+
+function go(eye){
+  // focus highlight
+  document.getElementById('card-'+eye).classList.add('focused');
+  val(eye);calc();
+}
+
+function setupFocus(){
+  ['od','oi'].forEach(eye=>{
+    ['s','c'].forEach(f=>{
+      const el=document.getElementById(eye+'-'+f);
+      el.addEventListener('focus',()=>document.getElementById('card-'+eye).classList.add('focused'));
+      el.addEventListener('blur',()=>document.getElementById('card-'+eye).classList.remove('focused'));
+    });
+  });
+}
+
+function nt(e,nid){if(e.key!=='Enter')return;e.preventDefault();if(nid)document.getElementById(nid).focus();}
+
+/* formulas — zeroed at E=0,C=0 */
+function fAs(E,C,Z){return 17.58*E+45.44*C+8.62*E*C-5.17*E*Z-9.15*C*Z-1.38*E*C*Z;}
+function fEco(E,C,Z){return 13.22*E+11.36*C+2.03*E*C-4.39*E*Z-3.77*C*Z-0.36*E*C*Z;}
+
+function ptaCls(p){return p<=.35?'ok':p<=.40?'warn':'danger';}
+
+function setRes(ablId,ptaNId,ptaPId,ptaXId,ptaRId,raw,paq){
+  const an=document.getElementById(ablId);
+  const pn=document.getElementById(ptaNId);
+  const pp=document.getElementById(ptaPId);
+  const px=document.getElementById(ptaXId);
+  const pr=document.getElementById(ptaRId);
+  document.getElementById(ptaRId.replace('pr','pt')).textContent=T[lang].fuori;
+
+  if(raw===null){
+    an.textContent='\u2014';pn.textContent='\u2014';pn.className='pta-n';
+    pp.textContent='';pp.className='pta-pct';
+    px.classList.remove('on');pr.classList.remove('bad');return;
+  }
+  const abl=Math.max(0,raw);
+  const disp=abl>0?Math.ceil(abl*1.05):0;
+  an.textContent=disp;
+  if(disp===0){
+    pn.textContent='\u2014';pn.className='pta-n';
+    pp.textContent='';pp.className='pta-pct';
+    px.classList.remove('on');pr.classList.remove('bad');return;
+  }
+  const pta=(disp+100)/paq;
+  const pct=(pta*100).toFixed(1);
+  const cls=ptaCls(pta);
+  pn.textContent=pct;pn.className='pta-n '+cls;
+  pp.textContent='%';
+  if(cls==='danger'){
+    pp.className='pta-pct danger';
+    px.classList.add('on');pr.classList.add('bad');
+  } else {
+    pp.className='pta-pct';
+    px.classList.remove('on');pr.classList.remove('bad');
+  }
+}
+
+function calc(){
+  const odE=gv('od-s'),odC=gv('od-c'),oiE=gv('oi-s'),oiC=gv('oi-c');
+  const odZ=+document.getElementById('od-zr').value;
+  const oiZ=+document.getElementById('oi-zr').value;
+  const odP=+document.getElementById('od-pr').value;
+  const oiP=+document.getElementById('oi-pr').value;
+  const odOk=odE>=-15&&odE<=6&&odC>=-8&&odC<=0;
+  const oiOk=oiE>=-15&&oiE<=6&&oiC>=-8&&oiC<=0;
+
+  setRes('ra-od','pa-od','pp-a-od','px-a-od','pr-a-od',odOk?fAs(odE,odC,odZ):null,odP);
+  setRes('re-od','pe-od','pp-e-od','px-e-od','pr-e-od',odOk?fEco(odE,odC,odZ):null,odP);
+  setRes('ra-oi','pa-oi','pp-a-oi','px-a-oi','pr-a-oi',oiOk?fAs(oiE,oiC,oiZ):null,oiP);
+  setRes('re-oi','pe-oi','pp-e-oi','px-e-oi','pr-e-oi',oiOk?fEco(oiE,oiC,oiZ):null,oiP);
+}
+
+/* touch: tap ! to show tooltip */
+document.addEventListener('click',e=>{
+  const row=e.target.closest('.pta-row.bad');
+  document.querySelectorAll('.pta-row.bad').forEach(r=>{
+    if(r!==row)r.classList.remove('tip-show');
+  });
+  if(row)row.classList.toggle('tip-show');
+});
+
+(function(){
+  document.querySelectorAll('input[type="range"]').forEach(r=>fill(r));
+  setupFocus();
+  calc();
+})();
+</script>
+</body>
+</html>
